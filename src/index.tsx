@@ -1,5 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+
+// fonts
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import theme from "src/theme";
 import App from "./App";
 
 const root = ReactDOM.createRoot(
@@ -7,6 +16,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
