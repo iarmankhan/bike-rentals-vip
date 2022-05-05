@@ -46,7 +46,19 @@ const deleteBike = async (bikeId: string) => {
 const getBikes = async () => {
   try {
     const bikeRef = collection(db, "bikes");
-    return await getDocs(bikeRef);
+    const bikesSnapshot = await getDocs(bikeRef);
+
+    if (!bikesSnapshot.empty) {
+      return bikesSnapshot.docs.map(
+        (bikeDoc) =>
+          ({
+            ...bikeDoc.data(),
+            id: bikeDoc.id,
+          } as Bike)
+      );
+    }
+
+    return [];
   } catch (e) {
     console.log(e);
     return [];

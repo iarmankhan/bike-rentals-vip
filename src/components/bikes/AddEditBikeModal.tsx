@@ -1,21 +1,25 @@
-import { FC } from "react";
+import { FC, useState } from "react";
+import Button from "@mui/lab/LoadingButton";
 import {
   Box,
-  Button,
   Checkbox,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   FormGroup,
-  Paper,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { Bike } from "src/types/bikes.types";
 import * as Yup from "yup";
+import { addBike } from "src/api/bikes";
 
 interface AddEditBikeModalProps {
   open: boolean;
+  onClose: () => void;
+  onBikeAdded: () => void;
 }
 
 const AddEditBikeSchema = Yup.object().shape({
@@ -25,31 +29,56 @@ const AddEditBikeSchema = Yup.object().shape({
   isAvailable: Yup.boolean().required("Availability is required"),
 });
 
-const AddEditBikeModal: FC<AddEditBikeModalProps> = ({ open }) => {
-  const { errors, values, touched, handleBlur, handleChange } = useFormik<Bike>(
-    {
-      validationSchema: AddEditBikeSchema,
-      initialValues: {
-        color: "",
-        isAvailable: false,
-        location: "",
-        model: "",
-        rating: 0,
-      },
-      onSubmit: (data) => {
-        console.log(data);
-      },
-    }
-  );
+const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
+  open,
+  onClose,
+  onBikeAdded,
+}) => {
+  const [loading, setLoading] = useState(false);
+  const {
+    errors,
+    values,
+    touched,
+    handleBlur,
+    handleSubmit,
+    handleChange,
+    resetForm,
+  } = useFormik<Bike>({
+    validationSchema: AddEditBikeSchema,
+    initialValues: {
+      color: "",
+      isAvailable: false,
+      location: "",
+      model: "",
+      rating: 0,
+    },
+    onSubmit: async (data) => {
+      setLoading(true);
+      const bike = await addBike(data);
+      console.log({ bike });
+      setLoading(false);
+      onBikeAdded();
+    },
+  });
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   return (
-    <Dialog open={open}>
-      <Paper>
-        <Typography variant="h6">Add Bike</Typography>
-
-        <form>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="xs"
+      scroll="body"
+    >
+      <DialogTitle>Add Bike</DialogTitle>
+      <DialogContent dividers>
+        <form id="bike-form" onSubmit={handleSubmit}>
           <Box>
-            <Box mt={3}>
+            <Box mt={1}>
               <TextField
                 id="model"
                 name="model"
@@ -59,6 +88,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({ open }) => {
                 error={touched.model && !!errors.model}
                 helperText={(touched.model && errors.model) || ""}
                 label="Model"
+                fullWidth
               />
             </Box>
             <Box mt={3}>
@@ -71,6 +101,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({ open }) => {
                 error={touched.color && !!errors.color}
                 helperText={(touched.color && errors.color) || ""}
                 label="Color"
+                fullWidth
               />
             </Box>
             <Box mt={3}>
@@ -83,10 +114,11 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({ open }) => {
                 error={touched.location && !!errors.location}
                 helperText={(touched.location && errors.location) || ""}
                 label="Location"
+                fullWidth
               />
             </Box>
 
-            <FormGroup>
+            <FormGroup sx={{ mt: 2 }}>
               <FormControlLabel
                 id="isAvailable"
                 name="isAvailable"
@@ -94,11 +126,22 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({ open }) => {
                 label="Available for rent?"
               />
             </FormGroup>
-
-            <Button variant="contained">Add Bike</Button>
           </Box>
         </form>
-      </Paper>
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          loading={loading}
+          variant="contained"
+          type="submit"
+          form="bike-form"
+        >
+          Add Bike
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
