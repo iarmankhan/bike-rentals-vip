@@ -6,7 +6,9 @@ interface MainLayoutProps {
 }
 
 const MainLayout: FC<MainLayoutProps> = ({ children }) => (
-  <Container maxWidth="sm">{children}</Container>
+  <Container maxWidth="md" sx={{ pt: 2 }}>
+    {children}
+  </Container>
 );
 
 export default MainLayout;
