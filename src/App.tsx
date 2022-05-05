@@ -1,19 +1,13 @@
-const App = () => (
-  <div className="App">
-    <header className="App-header">
-      <p>
-        Edit <code>src/App.tsx</code> and save to reload.
-      </p>
-      <a
-        className="App-link"
-        href="https://reactjs.org"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn React
-      </a>
-    </header>
-  </div>
-);
+import MainNavigation from "src/navigation";
+import { useEffect } from "react";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "src/config/firebase";
+
+const App = () => {
+  useEffect(() => {
+    initializeApp(firebaseConfig);
+  }, []);
+  return <MainNavigation />;
+};
 
 export default App;
