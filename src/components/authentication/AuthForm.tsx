@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
 import { useFormik } from "formik";
+import Button from "@mui/lab/LoadingButton";
 import {
   Box,
-  Button,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -12,12 +12,8 @@ import {
   TextField,
 } from "@mui/material";
 import * as Yup from "yup";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { login, register } from "src/api/authentication";
 
 interface AuthFormDTO {
   role?: string;
@@ -41,7 +37,7 @@ const AuthFormSchema = Yup.object().shape({
 const AuthForm: FC<AuthFormProps> = ({ type }) => {
   const navigate = useNavigate();
 
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik<AuthFormDTO>({
@@ -53,35 +49,15 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
       },
       onSubmit: async ({ password, email, role }) => {
         setLoading(true);
-        const authentication = getAuth();
 
+        let res = null;
         if (type === "login") {
-          await signInWithEmailAndPassword(
-            authentication,
-            email,
-            password
-          ).then((response) => {
-            console.log({ response });
-            navigate("/home");
-            // sessionStorage.setItem(
-            //   "Auth Token",
-            //   response._tokenResponse.refreshToken
-            // );
-          });
+          res = await login(email, password);
         } else {
-          await createUserWithEmailAndPassword(
-            authentication,
-            email,
-            password
-          ).then((response) => {
-            console.log({ response, role });
-            navigate("/home");
-            // sessionStorage.setItem(
-            //   "Auth Token",
-            //   // response._tokenResponse.refreshToken
-            // );
-          });
+          res = await register(email, password, `${role}`);
         }
+
+        if (res) navigate("/");
 
         setLoading(false);
       },
@@ -151,7 +127,12 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
           />
         </Box>
 
-        <Button sx={{ mt: 3 }} variant="contained" type="submit">
+        <Button
+          sx={{ mt: 3 }}
+          loading={loading}
+          variant="contained"
+          type="submit"
+        >
           {type === "login" ? "Login" : "Register"}
         </Button>
       </Box>

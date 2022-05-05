@@ -7,6 +7,9 @@ import {
   doc,
   deleteDoc,
   getDocs,
+  query,
+  where,
+  limit,
 } from "firebase/firestore";
 import { User } from "src/types/users.types";
 
@@ -53,4 +56,20 @@ const getUsers = async () => {
   }
 };
 
-export { addUser, editUser, deleteUser, getUsers };
+const getUser = async (email: string) => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email), limit(1));
+    const queryDocs = await getDocs(q);
+
+    if (!queryDocs.empty) {
+      return queryDocs.docs[0].data();
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export { addUser, editUser, deleteUser, getUsers, getUser };
