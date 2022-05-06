@@ -6,3 +6,10 @@ export interface Bike {
   rating?: Record<string, number>;
   isAvailable: boolean;
 }
+
+export interface BikeFiltersType {
+  location: string;
+  model: string;
+  color: string;
+  rating: string | number;
+}
