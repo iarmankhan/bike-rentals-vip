@@ -1,20 +1,33 @@
 import { db } from "src/config/firebase";
 import {
-  collection,
   addDoc,
-  updateDoc,
-  serverTimestamp,
-  doc,
+  collection,
   deleteDoc,
+  doc,
   getDocs,
-  query,
-  where,
   limit,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 import { User } from "src/types/users.types";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 const addUser = async (data: User) => {
   try {
+    const authentication = getAuth();
+
+    const response = await createUserWithEmailAndPassword(
+      authentication,
+      data.email,
+      data.password || ""
+    );
+
+    if (!response) {
+      throw new Error("User creation failed");
+    }
+
     const usersRef = collection(db, "users");
     return await addDoc(usersRef, {
       created: serverTimestamp(),
@@ -49,7 +62,19 @@ const deleteUser = async (userId: string) => {
 const getUsers = async () => {
   try {
     const usersRef = collection(db, "users");
-    return await getDocs(usersRef);
+    const usersSnapshot = await getDocs(usersRef);
+
+    if (!usersSnapshot.empty) {
+      return usersSnapshot.docs.map(
+        (userDoc) =>
+          ({
+            ...userDoc.data(),
+            id: userDoc.id,
+          } as User)
+      );
+    }
+
+    return [];
   } catch (e) {
     console.log(e);
     return [];

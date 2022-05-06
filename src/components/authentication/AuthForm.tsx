@@ -1,22 +1,12 @@
 import { FC, useState } from "react";
 import { useFormik } from "formik";
 import Button from "@mui/lab/LoadingButton";
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "src/api/authentication";
 
 interface AuthFormDTO {
-  role?: string;
   email: string;
   password: string;
 }
@@ -26,7 +16,6 @@ interface AuthFormProps {
 }
 
 const AuthFormSchema = Yup.object().shape({
-  role: Yup.string().optional(),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(2, "Too Short!")
@@ -43,18 +32,17 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
     useFormik<AuthFormDTO>({
       validationSchema: AuthFormSchema,
       initialValues: {
-        role: "",
         email: "",
         password: "",
       },
-      onSubmit: async ({ password, email, role }) => {
+      onSubmit: async ({ password, email }) => {
         setLoading(true);
 
         let res = null;
         if (type === "login") {
           res = await login(email, password);
         } else {
-          res = await register(email, password, `${role}`);
+          res = await register(email, password, `user`);
         }
 
         if (res) navigate("/");
@@ -70,36 +58,7 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
         flexDirection="column"
         sx={{ width: { sm: 300, md: 500 } }}
       >
-        {type === "signup" && (
-          <Box>
-            <FormControl error={touched.role && !!errors.role}>
-              <FormLabel id="user-role-radio-group-label">Role</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="user-role-radio-group-label"
-                name="user-role-radio-group"
-                value={values.role}
-                onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="manager"
-                  control={<Radio />}
-                  label="Manager"
-                />
-                <FormControlLabel
-                  value="user"
-                  control={<Radio />}
-                  label="User"
-                />
-              </RadioGroup>
-
-              {touched.role && errors.role && (
-                <FormHelperText>{errors.role}</FormHelperText>
-              )}
-            </FormControl>
-          </Box>
-        )}
-        <Box mt={3}>
+        <Box mt={1}>
           <TextField
             id="email"
             name="email"

@@ -1,81 +1,67 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import MainLayout from "src/layout/MainLayout";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import AddEditBikeModal from "src/components/bikes/AddEditBikeModal";
-import { getBikes } from "src/api/bikes";
-import { Bike } from "src/types/bikes.types";
+import AddEditUserModal from "src/components/users/AddEditUserModal";
+import { getUsers } from "src/api/users";
+import { User } from "src/types/users.types";
 import { GridColDef } from "@mui/x-data-grid";
 import StyledDataGrid from "src/components/ui/StyledDataGrid";
 import ActionMenu from "src/components/ui/ActionMenu";
 
-interface BikesProps {}
+interface UsersProps {}
 
-const Bikes: FC<BikesProps> = () => {
+const Users: FC<UsersProps> = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [selectedBike, setSelectedBike] = useState<Bike | undefined>(undefined);
-  const [bikes, setBikes] = useState<Bike[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const fetchBikes = useCallback(async () => {
-    const fetchedBikes = await getBikes();
-    setBikes(fetchedBikes);
+  const fetchUsers = useCallback(async () => {
+    const fetchedUsers = await getUsers();
+    setUsers(fetchedUsers);
   }, []);
 
   useEffect(() => {
     setLoading(true);
-    fetchBikes().then(() => {
+    fetchUsers().then(() => {
       setLoading(false);
     });
   }, []);
 
   const columns: GridColDef[] = [
     {
-      field: "model",
-      headerName: "Model",
+      field: "name",
+      headerName: "Name",
       minWidth: 250,
       flex: 1,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
-          <Typography>{params.row.model}</Typography>
+          <Typography>{params.row.name}</Typography>
         </Box>
       ),
     },
     {
-      field: "color",
-      headerName: "Color",
+      field: "email",
+      headerName: "Email",
       minWidth: 250,
       flex: 1,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
-          <Typography>{params.row.color}</Typography>
+          <Typography>{params.row.email}</Typography>
         </Box>
       ),
     },
     {
-      field: "location",
-      headerName: "Location",
+      field: "role",
+      headerName: "Role",
       minWidth: 250,
       flex: 1,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
-          <Typography>{params.row.location}</Typography>
-        </Box>
-      ),
-    },
-    {
-      field: "is_available",
-      headerName: "Available for rent?",
-      minWidth: 250,
-      flex: 1,
-      sortable: true,
-      renderCell: (params) => (
-        <Box width="100%">
-          <Typography>
-            {params.row.is_available ? "Available" : "Not Available"}
-          </Typography>
+          <Typography>{params.row.role}</Typography>
         </Box>
       ),
     },
@@ -87,7 +73,7 @@ const Bikes: FC<BikesProps> = () => {
         <Box width="100%">
           <ActionMenu
             onEditClick={() => {
-              setSelectedBike(params.row);
+              setSelectedUser(params.row);
               setOpen(true);
             }}
             onDeleteClick={() => true}
@@ -101,16 +87,16 @@ const Bikes: FC<BikesProps> = () => {
     <MainLayout>
       <Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant="h1">Bikes</Typography>
+          <Typography variant="h1">Users</Typography>
           <Button
             onClick={() => {
-              setSelectedBike(undefined);
+              setSelectedUser(undefined);
               setOpen(true);
             }}
             variant="contained"
             color="primary"
           >
-            Add Bike
+            Add User
           </Button>
         </Box>
 
@@ -126,21 +112,21 @@ const Bikes: FC<BikesProps> = () => {
             </Box>
           )}
 
-          {!loading && !bikes.length && (
+          {!loading && !users.length && (
             <Box
               display="flex"
               alignItems="center"
               justifyContent="center"
               height={200}
             >
-              <Typography variant="h5">No bikes found</Typography>
+              <Typography variant="h5">No users found</Typography>
             </Box>
           )}
 
-          {!loading && bikes.length && (
+          {!loading && users.length && (
             <StyledDataGrid
               columns={columns}
-              rows={bikes}
+              rows={users}
               headerHeight={40}
               disableSelectionOnClick
               hideFooter
@@ -151,13 +137,13 @@ const Bikes: FC<BikesProps> = () => {
           )}
         </Box>
 
-        <AddEditBikeModal
-          bike={selectedBike}
+        <AddEditUserModal
+          user={selectedUser}
           open={open}
           onClose={() => setOpen(false)}
-          onBikeAdded={() => {
+          onUserAdded={() => {
             setOpen(false);
-            fetchBikes();
+            fetchUsers();
           }}
         />
       </Box>
@@ -165,4 +151,4 @@ const Bikes: FC<BikesProps> = () => {
   );
 };
 
-export default Bikes;
+export default Users;

@@ -155,7 +155,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
           type="submit"
           form="bike-form"
         >
-          Add Bike
+          {bike && bike.id ? "Update Bike" : "Add Bike"}
         </Button>
       </DialogActions>
     </Dialog>
