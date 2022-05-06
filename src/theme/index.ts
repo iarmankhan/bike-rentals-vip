@@ -36,14 +36,6 @@ const theme = createTheme({
         },
       },
     },
-
-    MuiBackdrop: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "rgba(60, 62, 131,0.85)",
-        },
-      },
-    },
   },
 
   breakpoints: {

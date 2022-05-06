@@ -1,14 +1,18 @@
 import { FC, ReactNode } from "react";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import NavBar from "src/components/ui/NavBar";
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 const MainLayout: FC<MainLayoutProps> = ({ children }) => (
-  <Container maxWidth="md" sx={{ pt: 2 }}>
-    {children}
-  </Container>
+  <Box>
+    <NavBar />
+    <Container maxWidth="md" sx={{ pt: 2 }}>
+      {children}
+    </Container>
+  </Box>
 );
 
 export default MainLayout;

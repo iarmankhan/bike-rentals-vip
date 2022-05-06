@@ -6,12 +6,14 @@ import { getBikes } from "src/api/bikes";
 import { Bike } from "src/types/bikes.types";
 import { GridColDef } from "@mui/x-data-grid";
 import StyledDataGrid from "src/components/ui/StyledDataGrid";
+import ActionMenu from "src/components/ui/ActionMenu";
 
 interface BikesProps {}
 
 const Bikes: FC<BikesProps> = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [selectedBike, setSelectedBike] = useState<Bike | undefined>(undefined);
   const [bikes, setBikes] = useState<Bike[]>([]);
 
   const fetchBikes = useCallback(async () => {
@@ -65,13 +67,31 @@ const Bikes: FC<BikesProps> = () => {
     },
     {
       field: "is_available",
-      headerName: "Available?",
+      headerName: "Available for rent?",
       minWidth: 250,
       flex: 1,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
-          <Typography>{params.row.is_available}</Typography>
+          <Typography>
+            {params.row.is_available ? "Available" : "Not Available"}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      renderCell: (params) => (
+        <Box width="100%">
+          <ActionMenu
+            onEditClick={() => {
+              setSelectedBike(params.row);
+              setOpen(true);
+            }}
+            onDeleteClick={() => true}
+          />
         </Box>
       ),
     },
@@ -129,6 +149,7 @@ const Bikes: FC<BikesProps> = () => {
         </Box>
 
         <AddEditBikeModal
+          bike={selectedBike}
           open={open}
           onClose={() => setOpen(false)}
           onBikeAdded={() => {

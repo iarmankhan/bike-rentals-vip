@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Button from "@mui/lab/LoadingButton";
 import {
   Box,
@@ -14,12 +14,13 @@ import {
 import { useFormik } from "formik";
 import { Bike } from "src/types/bikes.types";
 import * as Yup from "yup";
-import { addBike } from "src/api/bikes";
+import { addBike, editBike } from "src/api/bikes";
 
 interface AddEditBikeModalProps {
   open: boolean;
   onClose: () => void;
   onBikeAdded: () => void;
+  bike?: Bike;
 }
 
 const AddEditBikeSchema = Yup.object().shape({
@@ -33,6 +34,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
   open,
   onClose,
   onBikeAdded,
+  bike,
 }) => {
   const [loading, setLoading] = useState(false);
   const {
@@ -43,6 +45,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
     handleSubmit,
     handleChange,
     resetForm,
+    setFieldValue,
   } = useFormik<Bike>({
     validationSchema: AddEditBikeSchema,
     initialValues: {
@@ -54,12 +57,25 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
     },
     onSubmit: async (data) => {
       setLoading(true);
-      const bike = await addBike(data);
-      console.log({ bike });
+
+      if (bike && bike.id) {
+        await editBike(bike.id, data);
+      } else {
+        await addBike(data);
+      }
       setLoading(false);
       onBikeAdded();
     },
   });
+
+  useEffect(() => {
+    if (bike) {
+      setFieldValue("color", bike.color);
+      setFieldValue("isAvailable", bike.isAvailable);
+      setFieldValue("location", bike.location);
+      setFieldValue("model", bike.model);
+    }
+  }, [bike]);
 
   const handleClose = () => {
     resetForm();
