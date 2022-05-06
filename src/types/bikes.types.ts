@@ -3,6 +3,6 @@ export interface Bike {
   model: string;
   color: string;
   location: string;
-  rating: number;
+  rating?: Record<string, number>;
   isAvailable: boolean;
 }

@@ -9,7 +9,7 @@ interface MainLayoutProps {
 const MainLayout: FC<MainLayoutProps> = ({ children }) => (
   <Box>
     <NavBar />
-    <Container maxWidth="md" sx={{ pt: 2 }}>
+    <Container maxWidth="lg" sx={{ pt: 2 }}>
       {children}
     </Container>
   </Box>

@@ -1,12 +1,11 @@
 import { FC } from "react";
-import MainLayout from "src/layout/MainLayout";
 import { Box, Typography } from "@mui/material";
 import AuthForm from "src/components/authentication/AuthForm";
 
 interface LoginProps {}
 
 const Login: FC<LoginProps> = () => (
-  <MainLayout>
+  <Box>
     <Box
       sx={{ height: "100vh" }}
       display="flex"
@@ -19,7 +18,7 @@ const Login: FC<LoginProps> = () => (
       </Box>
       <AuthForm type="login" />
     </Box>
-  </MainLayout>
+  </Box>
 );
 
 export default Login;

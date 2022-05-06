@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { addUser, getUser } from "src/api/users";
 
-const authentication = getAuth();
+export const authentication = getAuth();
 
 const login = async (email: string, password: string) => {
   try {

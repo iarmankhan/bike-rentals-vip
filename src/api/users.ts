@@ -12,12 +12,11 @@ import {
   where,
 } from "firebase/firestore";
 import { User } from "src/types/users.types";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { authentication } from "src/api/authentication";
 
 const addUser = async (data: User) => {
   try {
-    const authentication = getAuth();
-
     const response = await createUserWithEmailAndPassword(
       authentication,
       data.email,

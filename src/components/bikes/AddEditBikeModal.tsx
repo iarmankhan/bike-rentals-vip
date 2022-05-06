@@ -53,7 +53,6 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
       isAvailable: false,
       location: "",
       model: "",
-      rating: 0,
     },
     onSubmit: async (data) => {
       setLoading(true);
