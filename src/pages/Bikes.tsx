@@ -10,10 +10,12 @@ import ActionMenu from "src/components/ui/ActionMenu";
 import { getAverageRating } from "src/utils/getAverageRating";
 import BikeFilters from "src/components/bikes/BikeFilters";
 import ReserveBike from "src/components/bikes/ReserveBike";
+import useStore from "src/store";
 
 interface BikesProps {}
 
 const Bikes: FC<BikesProps> = () => {
+  const user = useStore((state) => state.user);
   const [loading, setLoading] = useState(true);
   const [openAddEditModal, setOpenAddEditModal] = useState(false);
   const [openReserveModal, setOpenReserveModal] = useState(false);
@@ -105,21 +107,24 @@ const Bikes: FC<BikesProps> = () => {
       sortable: false,
       renderCell: (params) => (
         <Box width="100%" display="flex" alignItems="center">
-          <Button
-            onClick={() => {
-              setSelectedBike(params.row);
-              setOpenReserveModal(true);
-            }}
-          >
-            Reserve
-          </Button>
-          <ActionMenu
-            onEditClick={() => {
-              setSelectedBike(params.row);
-              setOpenAddEditModal(true);
-            }}
-            onDeleteClick={() => true}
-          />
+          {user?.role !== "manager" ? (
+            <Button
+              onClick={() => {
+                setSelectedBike(params.row);
+                setOpenReserveModal(true);
+              }}
+            >
+              Reserve
+            </Button>
+          ) : (
+            <ActionMenu
+              onEditClick={() => {
+                setSelectedBike(params.row);
+                setOpenAddEditModal(true);
+              }}
+              onDeleteClick={() => true}
+            />
+          )}
         </Box>
       ),
     },
@@ -130,16 +135,18 @@ const Bikes: FC<BikesProps> = () => {
       <Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h1">Bikes</Typography>
-          <Button
-            onClick={() => {
-              setSelectedBike(undefined);
-              setOpenAddEditModal(true);
-            }}
-            variant="contained"
-            color="primary"
-          >
-            Add Bike
-          </Button>
+          {user?.role === "manager" && (
+            <Button
+              onClick={() => {
+                setSelectedBike(undefined);
+                setOpenAddEditModal(true);
+              }}
+              variant="contained"
+              color="primary"
+            >
+              Add Bike
+            </Button>
+          )}
         </Box>
 
         <BikeFilters

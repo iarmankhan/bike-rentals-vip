@@ -7,10 +7,15 @@ import { User } from "src/types/users.types";
 import { GridColDef } from "@mui/x-data-grid";
 import StyledDataGrid from "src/components/ui/StyledDataGrid";
 import ActionMenu from "src/components/ui/ActionMenu";
+import { useNavigate } from "react-router-dom";
+import useStore from "src/store";
 
 interface UsersProps {}
 
 const Users: FC<UsersProps> = () => {
+  const user = useStore((state) => state.user);
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
@@ -20,6 +25,12 @@ const Users: FC<UsersProps> = () => {
     const fetchedUsers = await getUsers();
     setUsers(fetchedUsers);
   }, []);
+
+  useEffect(() => {
+    if (user?.role === "user") {
+      navigate("/");
+    }
+  }, [user]);
 
   useEffect(() => {
     setLoading(true);

@@ -11,11 +11,35 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { logout } from "src/api/authentication";
+import { useNavigate } from "react-router-dom";
+import useStore from "src/store";
 
-const pages = ["Bikes", "Users", "Reservations"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = [
+  {
+    title: "Home",
+    path: "/",
+  },
+  {
+    title: "Bikes",
+    path: "/bikes",
+  },
+  {
+    title: "Users",
+    path: "/users",
+    role: "manager",
+  },
+  {
+    title: "Reservations",
+    path: "/reservations",
+    role: "manager",
+  },
+];
 
 const NavBar = () => {
+  const user = useStore((state) => state.user);
+  const navigate = useNavigate();
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -80,11 +104,20 @@ const NavBar = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              {pages.map(({ path, title, role }) => {
+                if (role && user?.role !== role) return null;
+                return (
+                  <MenuItem
+                    key={path}
+                    onClick={() => {
+                      navigate(path);
+                      handleCloseNavMenu();
+                    }}
+                  >
+                    <Typography textAlign="center">{title}</Typography>
+                  </MenuItem>
+                );
+              })}
             </Menu>
           </Box>
           <Typography
@@ -96,21 +129,31 @@ const NavBar = () => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            {pages.map(({ path, title, role }) => {
+              if (role && user?.role !== role) return null;
+              return (
+                <Button
+                  key={path}
+                  onClick={() => {
+                    navigate(path);
+                    handleCloseNavMenu();
+                  }}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  {title}
+                </Button>
+              );
+            })}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt={user?.name || "User"}
+                  src="/static/images/avatar/2.jpg"
+                  color="secondary"
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -129,11 +172,16 @@ const NavBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem
+                onClick={async () => {
+                  const resp = await logout();
+                  if (resp) navigate("/");
+
+                  handleCloseUserMenu();
+                }}
+              >
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
