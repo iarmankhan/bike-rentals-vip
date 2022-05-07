@@ -10,6 +10,7 @@ import Button from "@mui/lab/LoadingButton";
 import { Bike } from "src/types/bikes.types";
 import { DateRangePicker, Range } from "react-date-range";
 import { createReservation } from "src/api/bike-user";
+import useStore from "src/store";
 
 interface ReserveBikeProps {
   open: boolean;
@@ -18,6 +19,7 @@ interface ReserveBikeProps {
 }
 
 const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
+  const user = useStore((state) => state.user);
   const [loading, setLoading] = useState(false);
 
   const [selectedRange, setSelectedRange] = useState<Range>({
@@ -33,14 +35,21 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
   };
 
   const reserveBike = async () => {
-    if (!bike || !bike.id || !selectedRange.startDate || !selectedRange.endDate)
+    if (
+      !bike ||
+      !user ||
+      !user.id ||
+      !bike.id ||
+      !selectedRange.startDate ||
+      !selectedRange.endDate
+    )
       return;
 
     setLoading(true);
 
     const response = await createReservation(
       bike.id,
-      "user1",
+      user.id,
       selectedRange.startDate,
       selectedRange.endDate
     );

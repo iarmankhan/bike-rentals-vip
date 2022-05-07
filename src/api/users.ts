@@ -87,7 +87,10 @@ const getUser = async (email: string) => {
     const queryDocs = await getDocs(q);
 
     if (!queryDocs.empty) {
-      return queryDocs.docs[0].data();
+      return {
+        ...queryDocs.docs[0].data(),
+        id: queryDocs.docs[0].id,
+      } as User;
     }
     return null;
   } catch (e) {

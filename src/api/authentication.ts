@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence,
+  signOut,
 } from "firebase/auth";
 import { addUser, getUser } from "src/api/users";
 
@@ -57,4 +58,12 @@ const register = async (email: string, password: string, role: string) => {
   }
 };
 
-export { login, register };
+const logout = async () => {
+  try {
+    return await signOut(authentication);
+  } catch (error) {
+    return null;
+  }
+};
+
+export { login, register, logout };
