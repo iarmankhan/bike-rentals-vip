@@ -1,6 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+// react date range
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
+
 // fonts
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";

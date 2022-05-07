@@ -9,12 +9,14 @@ import StyledDataGrid from "src/components/ui/StyledDataGrid";
 import ActionMenu from "src/components/ui/ActionMenu";
 import { getAverageRating } from "src/utils/getAverageRating";
 import BikeFilters from "src/components/bikes/BikeFilters";
+import ReserveBike from "src/components/bikes/ReserveBike";
 
 interface BikesProps {}
 
 const Bikes: FC<BikesProps> = () => {
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const [openAddEditModal, setOpenAddEditModal] = useState(false);
+  const [openReserveModal, setOpenReserveModal] = useState(false);
   const [selectedBike, setSelectedBike] = useState<Bike | undefined>(undefined);
   const [bikes, setBikes] = useState<Bike[]>([]);
   const [filteredBikes, setFilteredBikes] = useState<Bike[]>([]);
@@ -102,11 +104,19 @@ const Bikes: FC<BikesProps> = () => {
       headerName: "Actions",
       sortable: false,
       renderCell: (params) => (
-        <Box width="100%">
+        <Box width="100%" display="flex" alignItems="center">
+          <Button
+            onClick={() => {
+              setSelectedBike(params.row);
+              setOpenReserveModal(true);
+            }}
+          >
+            Reserve
+          </Button>
           <ActionMenu
             onEditClick={() => {
               setSelectedBike(params.row);
-              setOpen(true);
+              setOpenAddEditModal(true);
             }}
             onDeleteClick={() => true}
           />
@@ -123,7 +133,7 @@ const Bikes: FC<BikesProps> = () => {
           <Button
             onClick={() => {
               setSelectedBike(undefined);
-              setOpen(true);
+              setOpenAddEditModal(true);
             }}
             variant="contained"
             color="primary"
@@ -178,12 +188,18 @@ const Bikes: FC<BikesProps> = () => {
 
         <AddEditBikeModal
           bike={selectedBike}
-          open={open}
-          onClose={() => setOpen(false)}
+          open={openAddEditModal}
+          onClose={() => setOpenAddEditModal(false)}
           onBikeAdded={() => {
-            setOpen(false);
+            setOpenAddEditModal(false);
             fetchBikes();
           }}
+        />
+
+        <ReserveBike
+          bike={selectedBike}
+          open={openReserveModal}
+          onClose={() => setOpenReserveModal(false)}
         />
       </Box>
     </MainLayout>

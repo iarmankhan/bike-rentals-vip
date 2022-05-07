@@ -13,3 +13,10 @@ export interface BikeFiltersType {
   color: string;
   rating: string | number;
 }
+
+export interface ReserveBikeDTO {
+  bikeId: string;
+  userId: string;
+  startDate: Date;
+  endDate: Date;
+}
