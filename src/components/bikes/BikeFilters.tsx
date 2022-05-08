@@ -104,7 +104,7 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
           }}
         >
           <MenuItem value="">
-            <em>None</em>
+            <em>All</em>
           </MenuItem>
           {[...Array(5).keys()].map((i) => (
             <MenuItem key={i} value={i + 1}>

@@ -1,12 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import MainLayout from "src/layout/MainLayout";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import AddEditBikeModal from "src/components/bikes/AddEditBikeModal";
 import { getBikes } from "src/api/bikes";
 import { Bike } from "src/types/bikes.types";
@@ -32,7 +26,7 @@ const Bikes: FC<BikesProps> = () => {
   const [filteredBikes, setFilteredBikes] = useState<Bike[]>([]);
 
   const fetchBikes = useCallback(async () => {
-    const fetchedBikes = await getBikes();
+    const fetchedBikes = await getBikes(user);
     setBikes(fetchedBikes);
     setFilteredBikes(fetchedBikes);
   }, []);
@@ -116,10 +110,11 @@ const Bikes: FC<BikesProps> = () => {
       headerName: "Actions",
       sortable: false,
       minWidth: 200,
+      flex: 1,
       renderCell: (params) => (
         <Box width="100%" display="flex" alignItems="center">
           {user?.role !== "manager" ? (
-            <Stack direction="row" spacing={1}>
+            <>
               <Button
                 onClick={() => {
                   setSelectedBike(params.row);
@@ -129,16 +124,27 @@ const Bikes: FC<BikesProps> = () => {
                 Rate
               </Button>
 
-              <Button
-                onClick={() => {
-                  setSelectedBike(params.row);
-                  setOpenReserveModal(true);
-                }}
-                disabled={!params.row.isAvailable}
-              >
-                Reserve
-              </Button>
-            </Stack>
+              {params.row?.isReservedByUser ? (
+                <Button
+                  onClick={() => {
+                    setSelectedBike(params.row);
+                    setOpenReserveModal(true);
+                  }}
+                >
+                  Cancel Reservation
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setSelectedBike(params.row);
+                    setOpenReserveModal(true);
+                  }}
+                  disabled={!params.row.isAvailable}
+                >
+                  Reserve
+                </Button>
+              )}
+            </>
           ) : (
             <ActionMenu
               onEditClick={() => {

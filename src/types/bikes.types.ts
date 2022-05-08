@@ -5,6 +5,7 @@ export interface Bike {
   location: string;
   rating?: Record<string, number>;
   isAvailable: boolean;
+  isReservedByUser?: boolean;
 }
 
 export interface BikeFiltersType {

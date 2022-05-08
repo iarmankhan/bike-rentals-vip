@@ -59,10 +59,13 @@ const getBikeReservations = async (bikeId: string) => {
     const queryDocs = await getDocs(q);
 
     if (!queryDocs.empty) {
-      return {
-        ...queryDocs.docs[0].data(),
-        id: queryDocs.docs[0].id,
-      } as Reservation;
+      return queryDocs.docs.map(
+        (reservationDoc) =>
+          ({
+            ...reservationDoc.data(),
+            id: reservationDoc.id,
+          } as Reservation)
+      );
     }
     return [];
   } catch (error) {
@@ -71,4 +74,32 @@ const getBikeReservations = async (bikeId: string) => {
   }
 };
 
-export { createReservation, cancelReservation, getBikeReservations };
+const getUserReservations = async (userId: string) => {
+  try {
+    const user = doc(collection(db, "users"), userId);
+    const reservationsRef = collection(db, "reservations");
+    const q = query(reservationsRef, where("user", "==", user));
+    const queryDocs = await getDocs(q);
+
+    if (!queryDocs.empty) {
+      return queryDocs.docs.map(
+        (reservationDoc) =>
+          ({
+            ...reservationDoc.data(),
+            id: reservationDoc.id,
+          } as Reservation)
+      );
+    }
+    return [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export {
+  createReservation,
+  cancelReservation,
+  getBikeReservations,
+  getUserReservations,
+};

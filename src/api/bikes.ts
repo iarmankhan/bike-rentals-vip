@@ -8,7 +8,9 @@ import {
   deleteDoc,
   getDocs,
 } from "firebase/firestore";
-import { Bike } from "src/types/bikes.types";
+import { Bike, Reservation } from "src/types/bikes.types";
+import { User } from "src/types/users.types";
+import { getUserReservations } from "src/api/bike-user";
 
 const addBike = async (data: Bike) => {
   try {
@@ -43,10 +45,16 @@ const deleteBike = async (bikeId: string) => {
   }
 };
 
-const getBikes = async () => {
+const getBikes = async (user?: User | null) => {
   try {
     const bikeRef = collection(db, "bikes");
     const bikesSnapshot = await getDocs(bikeRef);
+
+    let reservedBikes: Reservation[] = [];
+    if (user && user.role === "user" && user.id) {
+      reservedBikes = await getUserReservations(user.id);
+      console.log(reservedBikes);
+    }
 
     if (!bikesSnapshot.empty) {
       return bikesSnapshot.docs.map(
@@ -54,6 +62,10 @@ const getBikes = async () => {
           ({
             ...bikeDoc.data(),
             id: bikeDoc.id,
+            isReservedByUser:
+              reservedBikes.findIndex(
+                (reservation) => reservation.bike.id === bikeDoc.id
+              ) !== -1,
           } as Bike)
       );
     }
