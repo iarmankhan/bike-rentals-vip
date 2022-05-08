@@ -14,27 +14,38 @@ import { createReservation, getBikeReservations } from "src/api/bike-user";
 import useStore from "src/store";
 import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 interface ReserveBikeProps {
   open: boolean;
   onClose: () => void;
+  onReservationSuccess: () => void;
   bike?: Bike;
 }
 
-const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
+const ReserveBike: FC<ReserveBikeProps> = ({
+  open,
+  onClose,
+  onReservationSuccess,
+  bike,
+}) => {
   const user = useStore((state) => state.user);
 
   const [reservedDates, setReservedDates] = useState<Date[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const [selectedRange, setSelectedRange] = useState<Range>({});
+  const [selectedRange, setSelectedRange] = useState<Range>({
+    startDate: moment().startOf("day").toDate(),
+    endDate: moment().startOf("day").toDate(),
+    key: "selection",
+  });
 
   const handleClose = () => {
     setLoading(false);
     setSelectedRange({
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: moment().startOf("day").toDate(),
+      endDate: moment().startOf("day").toDate(),
       key: "selection",
     });
     onClose();
@@ -53,6 +64,20 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
       return;
     }
 
+    if (
+      reservedDates.some((date) =>
+        moment(date).isBetween(
+          moment(selectedRange.startDate),
+          moment(selectedRange.endDate),
+          "days",
+          "[]"
+        )
+      )
+    ) {
+      toast.error("Bike is already reserved for this date range");
+      return;
+    }
+
     setLoading(true);
 
     const response = await createReservation(
@@ -68,7 +93,14 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
       toast.error("Some errors occurred, please try again later");
     } else {
       toast.success("Bike reserved successfully");
-      handleClose();
+
+      setSelectedRange({
+        startDate: moment().startOf("day").toDate(),
+        endDate: moment().startOf("day").toDate(),
+        key: "selection",
+      });
+
+      onReservationSuccess();
     }
   };
 
@@ -113,7 +145,12 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
             }}
           >
             {initialLoading ? (
-              <Box minHeight={200}>
+              <Box
+                minHeight={200}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
                 <CircularProgress />
               </Box>
             ) : (

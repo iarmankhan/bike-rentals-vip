@@ -275,6 +275,10 @@ const Bikes: FC<BikesProps> = () => {
           bike={selectedBike}
           open={openReserveModal}
           onClose={() => setOpenReserveModal(false)}
+          onReservationSuccess={() => {
+            setOpenReserveModal(false);
+            fetchBikes();
+          }}
         />
 
         <RateBikeModal

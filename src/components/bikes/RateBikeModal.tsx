@@ -54,6 +54,7 @@ const RateBikeModal: FC<RateBikeModalProps> = ({
     toast.success("Bike rated successfully");
 
     setLoading(false);
+    setGivenRating(null);
     onSuccess();
   };
 

@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Bike, BikeFiltersType } from "src/types/bikes.types";
 import { getAverageRating } from "src/utils/getAverageRating";
+import moment from "moment";
 
 interface BikeFiltersProps {
   bikes: Bike[];
@@ -21,6 +22,7 @@ const FILTER_INITIAL_STATE: BikeFiltersType = {
   model: "",
   color: "",
   rating: "",
+  date: "",
 };
 
 const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
@@ -28,9 +30,15 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
 
   useEffect(() => {
     const newFilteredBikes = bikes.filter((bike) => {
-      const { location, model, color, rating } = filters;
+      const { location, model, color, rating, date } = filters;
 
-      if (location === "" && model === "" && color === "" && rating === "")
+      if (
+        location === "" &&
+        model === "" &&
+        color === "" &&
+        rating === "" &&
+        date === ""
+      )
         return true;
 
       return (
@@ -41,10 +49,20 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
         (color === "" ||
           bike.color.toLowerCase().includes(color.toLowerCase())) &&
         (rating === "" ||
-          Math.floor(getAverageRating(bike?.rating || {})) === Number(rating))
+          Math.floor(getAverageRating(bike?.rating || {})) ===
+            Number(rating)) &&
+        (date === "" ||
+          bike?.reservations?.every(
+            (reservation) =>
+              !moment(date).isBetween(
+                moment.unix(reservation.startDate.seconds),
+                moment.unix(reservation.endDate.seconds),
+                "days",
+                "[]"
+              )
+          ))
       );
     });
-
     onBikeFilter(newFilteredBikes);
   }, [filters, bikes]);
 
@@ -64,6 +82,18 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
       alignItems="center"
       justifyContent="space-between"
     >
+      <TextField
+        id="date"
+        label="Date"
+        name="date"
+        type="date"
+        size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        value={filters.date}
+        onChange={handleFilterChange}
+      />
       <TextField
         name="model"
         id="model"

@@ -1,15 +1,15 @@
 import { db } from "src/config/firebase";
 import {
-  collection,
   addDoc,
-  updateDoc,
-  serverTimestamp,
-  doc,
+  collection,
   deleteDoc,
-  getDocs,
+  doc,
   DocumentReference,
   getDoc,
+  getDocs,
   query,
+  serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { Bike, Reservation } from "src/types/bikes.types";
@@ -67,21 +67,34 @@ const getBikes = async (user?: User | null) => {
     if (user && user.role === "user" && user.id) {
       const response = await getUserReservations(user.id);
       reservedBikes = response.reservations || [];
-      console.log(reservedBikes);
     }
 
     if (!bikesSnapshot.empty) {
-      return bikesSnapshot.docs.map(
-        (bikeDoc) =>
-          ({
-            ...bikeDoc.data(),
-            id: bikeDoc.id,
-            isReservedByUser:
-              reservedBikes.findIndex(
-                (reservation) => reservation.bike.id === bikeDoc.id
-              ) !== -1,
-          } as Bike)
-      );
+      const bikes: Bike[] = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const bikeDoc of bikesSnapshot.docs) {
+        const reservationsRef = collection(db, "reservations");
+        const q = query(reservationsRef, where("bike", "==", bikeDoc.ref));
+
+        // eslint-disable-next-line no-await-in-loop
+        const queryDocs = await getDocs(q);
+        const reservations = queryDocs.docs.map((reservationDoc) => ({
+          ...reservationDoc.data(),
+          id: reservationDoc.id,
+        }));
+
+        bikes.push({
+          ...bikeDoc.data(),
+          id: bikeDoc.id,
+          isReservedByUser:
+            reservedBikes.findIndex(
+              (reservation) => reservation.bike.id === bikeDoc.id
+            ) !== -1,
+          reservations,
+        } as Bike);
+      }
+
+      return bikes;
     }
 
     return [];

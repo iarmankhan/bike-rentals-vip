@@ -8,9 +8,11 @@ export interface Bike {
   rating?: Record<string, number>;
   isAvailable: boolean;
   isReservedByUser?: boolean;
+  reservations?: Reservation[];
 }
 
 export interface BikeFiltersType {
+  date: string;
   location: string;
   model: string;
   color: string;
