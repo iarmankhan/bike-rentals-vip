@@ -12,10 +12,12 @@ import BikeFilters from "src/components/bikes/BikeFilters";
 import ReserveBike from "src/components/bikes/ReserveBike";
 import useStore from "src/store";
 import RateBikeModal from "src/components/bikes/RateBikeModal";
+import { useNavigate } from "react-router-dom";
 
 interface BikesProps {}
 
 const Bikes: FC<BikesProps> = () => {
+  const navigate = useNavigate();
   const user = useStore((state) => state.user);
   const [loading, setLoading] = useState(true);
   const [openAddEditModal, setOpenAddEditModal] = useState(false);
@@ -152,6 +154,14 @@ const Bikes: FC<BikesProps> = () => {
                 setOpenAddEditModal(true);
               }}
               onDeleteClick={() => true}
+              moreActions={[
+                {
+                  label: "View Reservations",
+                  onClick: () => {
+                    navigate(`/bikes/${params.row.id}/reservations/`);
+                  },
+                },
+              ]}
             />
           )}
         </Box>

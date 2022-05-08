@@ -8,8 +8,10 @@ import {
   query,
   serverTimestamp,
   where,
+  getDoc,
 } from "firebase/firestore";
-import { Reservation } from "src/types/bikes.types";
+import { Bike, Reservation } from "src/types/bikes.types";
+import { getUserByRef } from "src/api/users";
 
 const createReservation = async (
   bikeId: string,
@@ -53,24 +55,47 @@ const cancelReservation = async (reservationId: string) => {
 
 const getBikeReservations = async (bikeId: string) => {
   try {
-    const bike = doc(collection(db, "bikes"), bikeId);
+    const bikeRef = doc(collection(db, "bikes"), bikeId);
+    const bike = await getDoc(bikeRef);
+
+    if (!bike.exists()) {
+      return { bike: null, reservations: null };
+    }
+
+    const bikeData = {
+      ...bike.data(),
+      id: bike.id,
+    } as Bike;
+
     const reservationsRef = collection(db, "reservations");
-    const q = query(reservationsRef, where("bike", "==", bike));
+    const q = query(reservationsRef, where("bike", "==", bikeRef));
     const queryDocs = await getDocs(q);
 
-    if (!queryDocs.empty) {
-      return queryDocs.docs.map(
-        (reservationDoc) =>
-          ({
-            ...reservationDoc.data(),
-            id: reservationDoc.id,
-          } as Reservation)
-      );
+    const reservations: Reservation[] = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const reservationDoc of queryDocs.docs) {
+      // eslint-disable-next-line no-await-in-loop
+      const user = await getUserByRef(reservationDoc.data().user);
+
+      reservations.push({
+        ...reservationDoc.data(),
+        id: reservationDoc.id,
+        user,
+      } as Reservation);
     }
-    return [];
+
+    if (!queryDocs.empty) {
+      return {
+        bike: bikeData,
+        reservations,
+      };
+    }
+
+    return { bike: bikeData, reservations: [] };
   } catch (error) {
     console.log(error);
-    return [];
+    return { bike: null, reservations: null };
   }
 };
 

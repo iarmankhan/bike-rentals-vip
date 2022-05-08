@@ -1,3 +1,5 @@
+import { User } from "src/types/users.types";
+
 export interface Bike {
   id?: string;
   model: string;
@@ -25,6 +27,7 @@ export interface ReserveBikeDTO {
 export interface Reservation {
   id: string;
   bike: Bike;
+  user: User | null;
   startDate: Date;
   endDate: Date;
 }

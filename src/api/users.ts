@@ -4,6 +4,8 @@ import {
   collection,
   deleteDoc,
   doc,
+  DocumentReference,
+  getDoc,
   getDocs,
   limit,
   query,
@@ -99,4 +101,21 @@ const getUser = async (email: string) => {
   }
 };
 
-export { addUser, editUser, deleteUser, getUsers, getUser };
+const getUserByRef = async (userRef: DocumentReference) => {
+  try {
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+      return {
+        ...userDoc.data(),
+        id: userDoc.id,
+      } as User;
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export { addUser, editUser, deleteUser, getUsers, getUser, getUserByRef };
