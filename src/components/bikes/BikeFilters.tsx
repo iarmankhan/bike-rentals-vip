@@ -91,6 +91,9 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
         InputLabelProps={{
           shrink: true,
         }}
+        inputProps={{
+          min: moment().format("YYYY-MM-DD"),
+        }}
         value={filters.date}
         onChange={handleFilterChange}
       />
