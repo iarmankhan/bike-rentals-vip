@@ -25,14 +25,10 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
   const user = useStore((state) => state.user);
 
   const [reservedDates, setReservedDates] = useState<Date[]>([]);
-  const [initialLoading, setInitialLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const [selectedRange, setSelectedRange] = useState<Range>({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  });
+  const [selectedRange, setSelectedRange] = useState<Range>({});
 
   const handleClose = () => {
     setLoading(false);
@@ -52,8 +48,10 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
       !bike.id ||
       !selectedRange.startDate ||
       !selectedRange.endDate
-    )
+    ) {
+      toast.error("Invalid input");
       return;
+    }
 
     setLoading(true);
 
@@ -115,7 +113,9 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
             }}
           >
             {initialLoading ? (
-              <CircularProgress />
+              <Box minHeight={200}>
+                <CircularProgress />
+              </Box>
             ) : (
               <DateRangePicker
                 ranges={[selectedRange]}

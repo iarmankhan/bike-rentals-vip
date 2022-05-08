@@ -7,6 +7,8 @@ import {
   doc,
   deleteDoc,
   getDocs,
+  DocumentReference,
+  getDoc,
 } from "firebase/firestore";
 import { Bike, Reservation } from "src/types/bikes.types";
 import { User } from "src/types/users.types";
@@ -52,7 +54,8 @@ const getBikes = async (user?: User | null) => {
 
     let reservedBikes: Reservation[] = [];
     if (user && user.role === "user" && user.id) {
-      reservedBikes = await getUserReservations(user.id);
+      const response = await getUserReservations(user.id);
+      reservedBikes = response.reservations || [];
       console.log(reservedBikes);
     }
 
@@ -77,4 +80,21 @@ const getBikes = async (user?: User | null) => {
   }
 };
 
-export { addBike, editBike, deleteBike, getBikes };
+const getBikeByRef = async (bikeRef: DocumentReference) => {
+  try {
+    const bikeDoc = await getDoc(bikeRef);
+
+    if (bikeDoc.exists()) {
+      return {
+        ...bikeDoc.data(),
+        id: bikeDoc.id,
+      } as Bike;
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export { addBike, editBike, deleteBike, getBikes, getBikeByRef };

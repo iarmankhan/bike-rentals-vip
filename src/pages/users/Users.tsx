@@ -91,8 +91,16 @@ const Users: FC<UsersProps> = () => {
             }}
             onDeleteClick={() => {
               setSelectedUser(params.row);
-                setOpenDeleteModal(true);
+              setOpenDeleteModal(true);
             }}
+            moreActions={[
+              {
+                label: "View Reservations",
+                onClick: () => {
+                  navigate(`/users/${params.row.id}/reservations/`);
+                },
+              },
+            ]}
           />
         </Box>
       ),
