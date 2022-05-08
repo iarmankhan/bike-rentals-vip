@@ -1,6 +1,12 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import MainLayout from "src/layout/MainLayout";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import AddEditBikeModal from "src/components/bikes/AddEditBikeModal";
 import { getBikes } from "src/api/bikes";
 import { Bike } from "src/types/bikes.types";
@@ -11,6 +17,7 @@ import { getAverageRating } from "src/utils/getAverageRating";
 import BikeFilters from "src/components/bikes/BikeFilters";
 import ReserveBike from "src/components/bikes/ReserveBike";
 import useStore from "src/store";
+import RateBikeModal from "src/components/bikes/RateBikeModal";
 
 interface BikesProps {}
 
@@ -19,6 +26,7 @@ const Bikes: FC<BikesProps> = () => {
   const [loading, setLoading] = useState(true);
   const [openAddEditModal, setOpenAddEditModal] = useState(false);
   const [openReserveModal, setOpenReserveModal] = useState(false);
+  const [openRatingModal, setOpenRatingModal] = useState(false);
   const [selectedBike, setSelectedBike] = useState<Bike | undefined>(undefined);
   const [bikes, setBikes] = useState<Bike[]>([]);
   const [filteredBikes, setFilteredBikes] = useState<Bike[]>([]);
@@ -79,7 +87,9 @@ const Bikes: FC<BikesProps> = () => {
       minWidth: 250,
       sortable: true,
       renderCell: (params) => {
-        const avgRating = getAverageRating(params.row.rating);
+        const avgRating = params.row.rating
+          ? getAverageRating(params.row.rating)
+          : 0;
         return (
           <Box width="100%">
             <Typography>{avgRating}</Typography>
@@ -88,7 +98,7 @@ const Bikes: FC<BikesProps> = () => {
       },
     },
     {
-      field: "is_available",
+      field: "isAvailable",
       headerName: "Available for rent?",
       minWidth: 250,
       flex: 1,
@@ -96,7 +106,7 @@ const Bikes: FC<BikesProps> = () => {
       renderCell: (params) => (
         <Box width="100%">
           <Typography>
-            {params.row.is_available ? "Available" : "Not Available"}
+            {params.row.isAvailable ? "Available" : "Not Available"}
           </Typography>
         </Box>
       ),
@@ -105,17 +115,30 @@ const Bikes: FC<BikesProps> = () => {
       field: "actions",
       headerName: "Actions",
       sortable: false,
+      minWidth: 200,
       renderCell: (params) => (
         <Box width="100%" display="flex" alignItems="center">
           {user?.role !== "manager" ? (
-            <Button
-              onClick={() => {
-                setSelectedBike(params.row);
-                setOpenReserveModal(true);
-              }}
-            >
-              Reserve
-            </Button>
+            <Stack direction="row" spacing={1}>
+              <Button
+                onClick={() => {
+                  setSelectedBike(params.row);
+                  setOpenRatingModal(true);
+                }}
+              >
+                Rate
+              </Button>
+
+              <Button
+                onClick={() => {
+                  setSelectedBike(params.row);
+                  setOpenReserveModal(true);
+                }}
+                disabled={!params.row.isAvailable}
+              >
+                Reserve
+              </Button>
+            </Stack>
           ) : (
             <ActionMenu
               onEditClick={() => {
@@ -207,6 +230,19 @@ const Bikes: FC<BikesProps> = () => {
           bike={selectedBike}
           open={openReserveModal}
           onClose={() => setOpenReserveModal(false)}
+        />
+
+        <RateBikeModal
+          open={openRatingModal}
+          bike={selectedBike}
+          onClose={() => {
+            setOpenRatingModal(false);
+            setSelectedBike(undefined);
+          }}
+          onSuccess={() => {
+            setOpenRatingModal(false);
+            fetchBikes();
+          }}
         />
       </Box>
     </MainLayout>

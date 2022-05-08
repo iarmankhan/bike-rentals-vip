@@ -4,8 +4,12 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
+  query,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
+import { Reservation } from "src/types/bikes.types";
 
 const createReservation = async (
   bikeId: string,
@@ -47,4 +51,24 @@ const cancelReservation = async (reservationId: string) => {
   }
 };
 
-export { createReservation, cancelReservation };
+const getBikeReservations = async (bikeId: string) => {
+  try {
+    const bike = doc(collection(db, "bikes"), bikeId);
+    const reservationsRef = collection(db, "reservations");
+    const q = query(reservationsRef, where("bike", "==", bike));
+    const queryDocs = await getDocs(q);
+
+    if (!queryDocs.empty) {
+      return {
+        ...queryDocs.docs[0].data(),
+        id: queryDocs.docs[0].id,
+      } as Reservation;
+    }
+    return [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export { createReservation, cancelReservation, getBikeReservations };

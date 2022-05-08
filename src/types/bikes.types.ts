@@ -20,3 +20,10 @@ export interface ReserveBikeDTO {
   startDate: Date;
   endDate: Date;
 }
+
+export interface Reservation {
+  id: string;
+  bike: Bike;
+  startDate: Date;
+  endDate: Date;
+}

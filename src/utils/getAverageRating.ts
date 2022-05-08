@@ -1,4 +1,6 @@
-export const getAverageRating = (rating: Record<string, number>): number => {
+export const getAverageRating = (rating: Record<string, number>) => {
   const allRatings = Object.values(rating);
-  return allRatings.reduce((acc, curr) => acc + curr, 0) / allRatings.length;
+  const avgRating =
+    allRatings.reduce((acc, curr) => acc + curr, 0) / allRatings.length;
+  return parseFloat(avgRating.toFixed(2));
 };

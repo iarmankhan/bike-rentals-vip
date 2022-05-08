@@ -137,7 +137,15 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
               <FormControlLabel
                 id="isAvailable"
                 name="isAvailable"
-                control={<Checkbox defaultChecked />}
+                control={
+                  <Checkbox
+                    defaultChecked
+                    value={values.isAvailable}
+                    onChange={(e) => {
+                      setFieldValue("isAvailable", e.target.checked);
+                    }}
+                  />
+                }
                 label="Available for rent?"
               />
             </FormGroup>
