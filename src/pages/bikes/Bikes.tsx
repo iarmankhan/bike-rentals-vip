@@ -257,9 +257,13 @@ const Bikes: FC<BikesProps> = () => {
         <AddEditBikeModal
           bike={selectedBike}
           open={openAddEditModal}
-          onClose={() => setOpenAddEditModal(false)}
+          onClose={() => {
+            setOpenAddEditModal(false);
+            setSelectedBike(undefined);
+          }}
           onBikeAdded={() => {
             setOpenAddEditModal(false);
+            setSelectedBike(undefined);
             fetchBikes();
           }}
         />
@@ -267,9 +271,13 @@ const Bikes: FC<BikesProps> = () => {
         <DeleteModal
           bike={selectedBike}
           open={openDeleteModal}
-          onClose={() => setOpenDeleteModal(false)}
+          onClose={() => {
+            setOpenDeleteModal(false);
+            setSelectedBike(undefined);
+          }}
           onItemDeleted={() => {
             setOpenDeleteModal(false);
+            setSelectedBike(undefined);
             fetchBikes();
           }}
         />
@@ -277,9 +285,13 @@ const Bikes: FC<BikesProps> = () => {
         <ReserveBike
           bike={selectedBike}
           open={openReserveModal}
-          onClose={() => setOpenReserveModal(false)}
+          onClose={() => {
+            setOpenReserveModal(false);
+            setSelectedBike(undefined);
+          }}
           onReservationSuccess={() => {
             setOpenReserveModal(false);
+            setSelectedBike(undefined);
             fetchBikes();
           }}
         />
@@ -293,6 +305,7 @@ const Bikes: FC<BikesProps> = () => {
           }}
           onSuccess={() => {
             setOpenRatingModal(false);
+            setSelectedBike(undefined);
             fetchBikes();
           }}
         />
@@ -305,6 +318,7 @@ const Bikes: FC<BikesProps> = () => {
           }}
           onReservationCancel={() => {
             setOpenCancelReservationModal(false);
+            setSelectedBike(undefined);
             fetchBikes();
           }}
           bike={selectedBike}

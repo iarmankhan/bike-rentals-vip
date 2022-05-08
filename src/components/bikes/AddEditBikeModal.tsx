@@ -145,7 +145,7 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
                 control={
                   <Checkbox
                     defaultChecked
-                    value={values.isAvailable}
+                    checked={values.isAvailable}
                     onChange={(e) => {
                       setFieldValue("isAvailable", e.target.checked);
                     }}
