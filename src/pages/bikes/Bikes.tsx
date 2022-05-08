@@ -14,6 +14,8 @@ import useStore from "src/store";
 import RateBikeModal from "src/components/bikes/RateBikeModal";
 import { useNavigate } from "react-router-dom";
 import DeleteModal from "src/components/ui/DeleteModal";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
 
 interface BikesProps {}
 
@@ -33,22 +35,24 @@ const Bikes: FC<BikesProps> = () => {
     const fetchedBikes = await getBikes(user);
     setBikes(fetchedBikes);
     setFilteredBikes(fetchedBikes);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    setLoading(true);
-    fetchBikes().then(() => {
-      setLoading(false);
-    });
-  }, []);
+    if (user) {
+      setLoading(true);
+      fetchBikes().then(() => {
+        setLoading(false);
+      });
+    }
+  }, [user]);
 
   const columns: GridColDef[] = [
     {
       field: "model",
       headerName: "Model",
-      minWidth: 250,
-      flex: 1,
+      minWidth: 150,
       sortable: true,
+      flex: 1,
       renderCell: (params) => (
         <Box width="100%">
           <Typography>{params.row.model}</Typography>
@@ -58,8 +62,7 @@ const Bikes: FC<BikesProps> = () => {
     {
       field: "color",
       headerName: "Color",
-      minWidth: 250,
-      flex: 1,
+      minWidth: 50,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
@@ -70,9 +73,9 @@ const Bikes: FC<BikesProps> = () => {
     {
       field: "location",
       headerName: "Location",
-      minWidth: 250,
-      flex: 1,
+      minWidth: 100,
       sortable: true,
+      flex: 1,
       renderCell: (params) => (
         <Box width="100%">
           <Typography>{params.row.location}</Typography>
@@ -82,7 +85,7 @@ const Bikes: FC<BikesProps> = () => {
     {
       field: "rating",
       headerName: "Rating",
-      minWidth: 250,
+      minWidth: 20,
       sortable: true,
       renderCell: (params) => {
         const avgRating = params.row.rating
@@ -98,13 +101,17 @@ const Bikes: FC<BikesProps> = () => {
     {
       field: "isAvailable",
       headerName: "Available for rent?",
-      minWidth: 250,
+      minWidth: 50,
       flex: 1,
       sortable: true,
       renderCell: (params) => (
         <Box width="100%">
           <Typography>
-            {params.row.isAvailable ? "Available" : "Not Available"}
+            {params.row.isAvailable ? (
+              <EventAvailableIcon color="primary" />
+            ) : (
+              <EventBusyIcon color="error" />
+            )}
           </Typography>
         </Box>
       ),
@@ -113,13 +120,15 @@ const Bikes: FC<BikesProps> = () => {
       field: "actions",
       headerName: "Actions",
       sortable: false,
-      minWidth: 200,
+      minWidth: 300,
       flex: 1,
       renderCell: (params) => (
         <Box width="100%" display="flex" alignItems="center">
           {user?.role !== "manager" ? (
             <>
               <Button
+                variant="outlined"
+                sx={{ marginRight: "5px", padding: "3px " }}
                 onClick={() => {
                   setSelectedBike(params.row);
                   setOpenRatingModal(true);
@@ -130,6 +139,9 @@ const Bikes: FC<BikesProps> = () => {
 
               {params.row?.isReservedByUser ? (
                 <Button
+                  variant="contained"
+                  color="error"
+                  sx={{ padding: "5px 10px" }}
                   onClick={() => {
                     setSelectedBike(params.row);
                     setOpenReserveModal(true);
@@ -139,6 +151,8 @@ const Bikes: FC<BikesProps> = () => {
                 </Button>
               ) : (
                 <Button
+                  variant="contained"
+                  sx={{ padding: "5px 10px" }}
                   onClick={() => {
                     setSelectedBike(params.row);
                     setOpenReserveModal(true);
