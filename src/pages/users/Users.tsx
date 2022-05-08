@@ -93,13 +93,18 @@ const Users: FC<UsersProps> = () => {
               setSelectedUser(params.row);
               setOpenDeleteModal(true);
             }}
+            hideDelete={user?.id === params.row.id}
             moreActions={[
-              {
-                label: "View Reservations",
-                onClick: () => {
-                  navigate(`/users/${params.row.id}/reservations/`);
-                },
-              },
+              ...(user?.role !== "manager"
+                ? [
+                    {
+                      label: "View Reservations",
+                      onClick: () => {
+                        navigate(`/users/${params.row.id}/reservations/`);
+                      },
+                    },
+                  ]
+                : []),
             ]}
           />
         </Box>

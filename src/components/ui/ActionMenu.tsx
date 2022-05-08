@@ -9,12 +9,15 @@ interface ActionMenuProps {
     label: string;
     onClick: () => void;
   }[];
+
+  hideDelete?: boolean;
 }
 
 const ActionMenu: FC<ActionMenuProps> = ({
   onEditClick,
   onDeleteClick,
   moreActions = [],
+  hideDelete,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -59,14 +62,16 @@ const ActionMenu: FC<ActionMenuProps> = ({
         >
           Edit
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            onDeleteClick();
-          }}
-        >
-          Delete
-        </MenuItem>
+        {!hideDelete && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              onDeleteClick();
+            }}
+          >
+            Delete
+          </MenuItem>
+        )}
         {moreActions.map((action) => (
           <MenuItem
             key={action.label}
