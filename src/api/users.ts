@@ -53,6 +53,17 @@ const editUser = async (userId: string, data: Partial<User>) => {
 const deleteUser = async (userId: string) => {
   try {
     const userRef = doc(db, "users", userId);
+
+    const reservationsRef = collection(db, "reservations");
+    const q = query(reservationsRef, where("user", "==", userRef));
+    const queryDocs = await getDocs(q);
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const reservationDoc of queryDocs.docs) {
+      // eslint-disable-next-line no-await-in-loop
+      await deleteDoc(reservationDoc.ref);
+    }
+
     return await deleteDoc(userRef);
   } catch (e) {
     console.log(e);

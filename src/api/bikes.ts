@@ -9,6 +9,8 @@ import {
   getDocs,
   DocumentReference,
   getDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { Bike, Reservation } from "src/types/bikes.types";
 import { User } from "src/types/users.types";
@@ -40,6 +42,15 @@ const editBike = async (bikeId: string, data: Partial<Bike>) => {
 const deleteBike = async (bikeId: string) => {
   try {
     const bikeRef = doc(db, "bikes", bikeId);
+    const reservationsRef = collection(db, "reservations");
+    const q = query(reservationsRef, where("bike", "==", bikeRef));
+    const queryDocs = await getDocs(q);
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const reservationDoc of queryDocs.docs) {
+      // eslint-disable-next-line no-await-in-loop
+      await deleteDoc(reservationDoc.ref);
+    }
     return await deleteDoc(bikeRef);
   } catch (e) {
     console.log(e);
