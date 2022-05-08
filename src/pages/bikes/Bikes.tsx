@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteModal from "src/components/ui/DeleteModal";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
+import CancelReservationModal from "src/components/bikes/CancelReservationModal";
 
 interface BikesProps {}
 
@@ -23,6 +24,8 @@ const Bikes: FC<BikesProps> = () => {
   const navigate = useNavigate();
   const user = useStore((state) => state.user);
   const [loading, setLoading] = useState(true);
+  const [openCancelReservationModal, setOpenCancelReservationModal] =
+    useState(false);
   const [openAddEditModal, setOpenAddEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openReserveModal, setOpenReserveModal] = useState(false);
@@ -144,7 +147,7 @@ const Bikes: FC<BikesProps> = () => {
                   sx={{ padding: "5px 10px" }}
                   onClick={() => {
                     setSelectedBike(params.row);
-                    setOpenReserveModal(true);
+                    setOpenCancelReservationModal(true);
                   }}
                 >
                   Cancel Reservation
@@ -292,6 +295,20 @@ const Bikes: FC<BikesProps> = () => {
             setOpenRatingModal(false);
             fetchBikes();
           }}
+        />
+
+        <CancelReservationModal
+          open={openCancelReservationModal}
+          onClose={() => {
+            setOpenCancelReservationModal(false);
+            setSelectedBike(undefined);
+          }}
+          onReservationCancel={() => {
+            setOpenCancelReservationModal(false);
+            fetchBikes();
+          }}
+          bike={selectedBike}
+          user={user || undefined}
         />
       </Box>
     </MainLayout>

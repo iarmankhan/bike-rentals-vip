@@ -9,21 +9,21 @@ import {
 } from "@mui/material";
 import { Bike } from "src/types/bikes.types";
 import { User } from "src/types/users.types";
-import { deleteUser } from "src/api/users";
-import { deleteBike } from "src/api/bikes";
+import { cancelReservation } from "src/api/bike-user";
+import { toast } from "react-toastify";
 
-interface DeleteModalProps {
+interface CancelReservationModalProps {
   open: boolean;
   onClose: () => void;
-  onItemDeleted: () => void;
+  onReservationCancel: () => void;
   user?: User;
   bike?: Bike;
 }
 
-const DeleteModal: FC<DeleteModalProps> = ({
+const CancelReservationModal: FC<CancelReservationModalProps> = ({
   open,
   onClose,
-  onItemDeleted,
+  onReservationCancel,
   user,
   bike,
 }) => {
@@ -34,15 +34,16 @@ const DeleteModal: FC<DeleteModalProps> = ({
     setLoading(false);
   };
 
-  const handleDelete = async () => {
-    setLoading(true);
-    if (user && user.id) {
-      await deleteUser(user.id);
-    } else if (bike && bike.id) {
-      await deleteBike(bike.id);
+  const handleReservationCancel = async () => {
+    if (!bike || !bike.id || !user || !user.id) {
+      toast.error("Bike or user not found");
+      return;
     }
+
+    setLoading(true);
+    await cancelReservation(user.id, bike.id);
     setLoading(false);
-    onItemDeleted();
+    onReservationCancel();
   };
 
   return (
@@ -56,7 +57,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
       <DialogTitle>Are you sure?</DialogTitle>
       <DialogContent dividers>
         <DialogContentText id="alert-dialog-description">
-          You won&apos;t be able to recover this data later.
+          Your reservation will be cancelled for this bike
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -66,15 +67,15 @@ const DeleteModal: FC<DeleteModalProps> = ({
         <Button
           loading={loading}
           variant="contained"
-          color="error"
           type="submit"
-          onClick={handleDelete}
+          color="error"
+          onClick={handleReservationCancel}
         >
-          Yes, Delete
+          Yes, Cancel
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default DeleteModal;
+export default CancelReservationModal;

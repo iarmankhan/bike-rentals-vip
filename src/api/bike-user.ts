@@ -43,12 +43,28 @@ const createReservation = async (
   }
 };
 
-const cancelReservation = async (reservationId: string) => {
+const cancelReservation = async (userId: string, bikeId: string) => {
   try {
-    const reservationsRef = collection(db, "reservations");
-    const reservation = doc(reservationsRef, reservationId);
+    const userRef = doc(collection(db, "users"), userId);
+    const bikeRef = doc(collection(db, "bikes"), bikeId);
 
-    return await deleteDoc(reservation);
+    const reservationsRef = collection(db, "reservations");
+    const q = query(
+      reservationsRef,
+      where("bike", "==", bikeRef),
+      where("user", "==", userRef)
+    );
+    const queryDocs = await getDocs(q);
+
+    if (!queryDocs.empty) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const reservationDoc of queryDocs.docs) {
+        // eslint-disable-next-line no-await-in-loop
+        await deleteDoc(reservationDoc.ref);
+      }
+    }
+
+    return true;
   } catch (error) {
     console.log(error);
     return null;
