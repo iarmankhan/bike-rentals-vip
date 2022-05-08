@@ -1,9 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+import { ToastContainer } from "react-toastify";
+
 // react date range
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+
+// react toastify
+import "react-toastify/dist/ReactToastify.css";
 
 // fonts
 import "@fontsource/roboto/300.css";
@@ -23,6 +28,7 @@ root.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <App />
+      <ToastContainer />
     </ThemeProvider>
   </React.StrictMode>
 );

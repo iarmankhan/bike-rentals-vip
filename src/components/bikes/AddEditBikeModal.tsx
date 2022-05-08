@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import { Bike } from "src/types/bikes.types";
 import * as Yup from "yup";
 import { addBike, editBike } from "src/api/bikes";
+import { toast } from "react-toastify";
 
 interface AddEditBikeModalProps {
   open: boolean;
@@ -59,10 +60,14 @@ const AddEditBikeModal: FC<AddEditBikeModalProps> = ({
 
       if (bike && bike.id) {
         await editBike(bike.id, data);
+
+        toast.success("Bike updated successfully");
       } else {
         await addBike(data);
+        toast.success("Bike added successfully");
       }
       setLoading(false);
+
       onBikeAdded();
     },
   });

@@ -11,6 +11,7 @@ import { Bike } from "src/types/bikes.types";
 import { DateRangePicker, Range } from "react-date-range";
 import { createReservation } from "src/api/bike-user";
 import useStore from "src/store";
+import { toast } from "react-toastify";
 
 interface ReserveBikeProps {
   open: boolean;
@@ -57,8 +58,9 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
     setLoading(false);
 
     if (!response) {
-      console.log("Error");
+      toast.error("Some errors occurred, please try again later");
     } else {
+      toast.success("Bike reserved successfully");
       handleClose();
     }
   };

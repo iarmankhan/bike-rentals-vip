@@ -19,6 +19,7 @@ import { User } from "src/types/users.types";
 import * as Yup from "yup";
 import { addUser, editUser } from "src/api/users";
 import omit from "lodash/omit";
+import { toast } from "react-toastify";
 
 interface AddEditUserModalProps {
   open: boolean;
@@ -63,8 +64,10 @@ const AddEditUserModal: FC<AddEditUserModalProps> = ({
 
       if (user && user.id) {
         await editUser(user.id, omit(data, ["password"]));
+        toast.success("User updated successfully");
       } else {
         await addUser(data);
+        toast.success("User added successfully");
       }
       setLoading(false);
       onUserAdded();

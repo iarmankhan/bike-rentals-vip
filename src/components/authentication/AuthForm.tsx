@@ -5,6 +5,7 @@ import { Box, TextField } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "src/api/authentication";
+import { toast } from "react-toastify";
 
 interface AuthFormDTO {
   email: string;
@@ -45,7 +46,12 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
           res = await register(email, password, `user`);
         }
 
-        if (res) navigate("/");
+        if (res) {
+          toast.success(
+            type === "login" ? "Login Successful" : "Signup Successful"
+          );
+          navigate("/");
+        }
 
         setLoading(false);
       },

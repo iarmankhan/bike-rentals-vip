@@ -11,6 +11,7 @@ import Button from "@mui/lab/LoadingButton";
 import useStore from "src/store";
 import { Bike } from "src/types/bikes.types";
 import { editBike } from "src/api/bikes";
+import { toast } from "react-toastify";
 
 interface RateBikeModalProps {
   open: boolean;
@@ -49,6 +50,9 @@ const RateBikeModal: FC<RateBikeModalProps> = ({
             [user.id]: givenRating || 0,
           },
     });
+
+    toast.success("Bike rated successfully");
+
     setLoading(false);
     onSuccess();
   };
