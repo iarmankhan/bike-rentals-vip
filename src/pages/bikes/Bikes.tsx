@@ -13,6 +13,7 @@ import ReserveBike from "src/components/bikes/ReserveBike";
 import useStore from "src/store";
 import RateBikeModal from "src/components/bikes/RateBikeModal";
 import { useNavigate } from "react-router-dom";
+import DeleteModal from "src/components/ui/DeleteModal";
 
 interface BikesProps {}
 
@@ -21,6 +22,7 @@ const Bikes: FC<BikesProps> = () => {
   const user = useStore((state) => state.user);
   const [loading, setLoading] = useState(true);
   const [openAddEditModal, setOpenAddEditModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openReserveModal, setOpenReserveModal] = useState(false);
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [selectedBike, setSelectedBike] = useState<Bike | undefined>(undefined);
@@ -153,7 +155,10 @@ const Bikes: FC<BikesProps> = () => {
                 setSelectedBike(params.row);
                 setOpenAddEditModal(true);
               }}
-              onDeleteClick={() => true}
+              onDeleteClick={() => {
+                setSelectedBike(params.row);
+                setOpenDeleteModal(true);
+              }}
               moreActions={[
                 {
                   label: "View Reservations",
@@ -238,6 +243,16 @@ const Bikes: FC<BikesProps> = () => {
           onClose={() => setOpenAddEditModal(false)}
           onBikeAdded={() => {
             setOpenAddEditModal(false);
+            fetchBikes();
+          }}
+        />
+
+        <DeleteModal
+          bike={selectedBike}
+          open={openDeleteModal}
+          onClose={() => setOpenDeleteModal(false)}
+          onItemDeleted={() => {
+            setOpenDeleteModal(false);
             fetchBikes();
           }}
         />

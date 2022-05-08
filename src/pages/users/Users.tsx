@@ -9,6 +9,7 @@ import StyledDataGrid from "src/components/ui/StyledDataGrid";
 import ActionMenu from "src/components/ui/ActionMenu";
 import { useNavigate } from "react-router-dom";
 import useStore from "src/store";
+import DeleteModal from "src/components/ui/DeleteModal";
 
 interface UsersProps {}
 
@@ -18,6 +19,7 @@ const Users: FC<UsersProps> = () => {
 
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
 
@@ -87,7 +89,10 @@ const Users: FC<UsersProps> = () => {
               setSelectedUser(params.row);
               setOpen(true);
             }}
-            onDeleteClick={() => true}
+            onDeleteClick={() => {
+              setSelectedUser(params.row);
+                setOpenDeleteModal(true);
+            }}
           />
         </Box>
       ),
@@ -154,6 +159,15 @@ const Users: FC<UsersProps> = () => {
           onClose={() => setOpen(false)}
           onUserAdded={() => {
             setOpen(false);
+            fetchUsers();
+          }}
+        />
+        <DeleteModal
+          user={selectedUser}
+          open={openDeleteModal}
+          onClose={() => setOpenDeleteModal(false)}
+          onItemDeleted={() => {
+            setOpenDeleteModal(false);
             fetchUsers();
           }}
         />
