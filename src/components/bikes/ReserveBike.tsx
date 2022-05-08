@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Box,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,8 +10,9 @@ import {
 import Button from "@mui/lab/LoadingButton";
 import { Bike } from "src/types/bikes.types";
 import { DateRangePicker, Range } from "react-date-range";
-import { createReservation } from "src/api/bike-user";
+import { createReservation, getBikeReservations } from "src/api/bike-user";
 import useStore from "src/store";
+import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import { toast } from "react-toastify";
 
 interface ReserveBikeProps {
@@ -21,6 +23,9 @@ interface ReserveBikeProps {
 
 const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
   const user = useStore((state) => state.user);
+
+  const [reservedDates, setReservedDates] = useState<Date[]>([]);
+  const [initialLoading, setInitialLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [selectedRange, setSelectedRange] = useState<Range>({
@@ -31,7 +36,11 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
 
   const handleClose = () => {
     setLoading(false);
-    console.log(bike);
+    setSelectedRange({
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    });
     onClose();
   };
 
@@ -65,6 +74,25 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
     }
   };
 
+  useEffect(() => {
+    if (bike && bike.id && open) {
+      setInitialLoading(true);
+      getBikeReservations(bike.id).then(({ reservations }) => {
+        setReservedDates(
+          reservations
+            ?.map((reservation) =>
+              eachDayOfInterval({
+                start: new Date(reservation.startDate.seconds * 1000),
+                end: new Date(reservation.endDate.seconds * 1000),
+              })
+            )
+            .flat() || []
+        );
+        setInitialLoading(false);
+      });
+    }
+  }, [bike, open]);
+
   return (
     <Dialog
       open={open}
@@ -86,15 +114,19 @@ const ReserveBike: FC<ReserveBikeProps> = ({ open, onClose, bike }) => {
               },
             }}
           >
-            <DateRangePicker
-              ranges={[selectedRange]}
-              onChange={(range) => {
-                console.log(range);
-                setSelectedRange(range.selection);
-              }}
-              staticRanges={[]}
-              minDate={new Date()}
-            />
+            {initialLoading ? (
+              <CircularProgress />
+            ) : (
+              <DateRangePicker
+                ranges={[selectedRange]}
+                onChange={(range) => {
+                  setSelectedRange(range.selection);
+                }}
+                staticRanges={[]}
+                minDate={new Date()}
+                disabledDates={reservedDates}
+              />
+            )}
           </Box>
         </form>
       </DialogContent>

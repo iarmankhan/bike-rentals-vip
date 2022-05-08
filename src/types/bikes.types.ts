@@ -28,6 +28,10 @@ export interface Reservation {
   id: string;
   bike: Bike;
   user: User | null;
-  startDate: Date;
-  endDate: Date;
+  startDate: {
+    seconds: number;
+  };
+  endDate: {
+    seconds: number;
+  };
 }
