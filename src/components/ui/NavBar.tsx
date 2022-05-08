@@ -25,11 +25,6 @@ const pages = [
     path: "/users",
     role: "manager",
   },
-  {
-    title: "Reservations",
-    path: "/reservations",
-    role: "manager",
-  },
 ];
 
 const NavBar = () => {

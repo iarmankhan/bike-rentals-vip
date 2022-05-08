@@ -87,8 +87,8 @@ const Bikes: FC<BikesProps> = () => {
     },
     {
       field: "rating",
-      headerName: "Rating",
-      minWidth: 20,
+      headerName: "Avg. Rating",
+      minWidth: 140,
       sortable: true,
       renderCell: (params) => {
         const avgRating = params.row.rating

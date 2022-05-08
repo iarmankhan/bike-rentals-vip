@@ -7,6 +7,7 @@ import { getBikeReservations } from "src/api/bike-user";
 import { GridColDef } from "@mui/x-data-grid";
 import StyledDataGrid from "src/components/ui/StyledDataGrid";
 import moment from "moment";
+import { getAverageRating } from "src/utils/getAverageRating";
 
 interface BikeReservationsProps {}
 
@@ -116,7 +117,8 @@ const BikeReservations: FC<BikeReservationsProps> = () => {
                   Color: {bike?.color}
                 </Typography>
                 <Typography variant="subtitle1">
-                  Avg Rating: {bike?.model}
+                  Avg. Rating:{" "}
+                  {bike?.rating ? getAverageRating(bike?.rating) : 0}
                 </Typography>
                 <Typography variant="subtitle1">
                   Location: {bike?.location}
