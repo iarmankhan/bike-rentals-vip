@@ -24,7 +24,6 @@ const addBike = async (data: Bike) => {
       ...data,
     });
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -34,7 +33,6 @@ const editBike = async (bikeId: string, data: Partial<Bike>) => {
     const bikeRef = doc(db, "bikes", bikeId);
     return await updateDoc(bikeRef, data);
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -53,7 +51,6 @@ const deleteBike = async (bikeId: string) => {
     }
     return await deleteDoc(bikeRef);
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -99,7 +96,6 @@ const getBikes = async (user?: User | null) => {
 
     return [];
   } catch (e) {
-    console.log(e);
     return [];
   }
 };
@@ -116,7 +112,6 @@ const getBikeByRef = async (bikeRef: DocumentReference) => {
     }
     return null;
   } catch (e) {
-    console.log(e);
     return null;
   }
 };

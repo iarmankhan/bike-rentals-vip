@@ -37,8 +37,6 @@ const createReservation = async (
       createdAt: serverTimestamp(),
     });
   } catch (error) {
-    console.log(error);
-
     return null;
   }
 };
@@ -66,7 +64,6 @@ const cancelReservation = async (userId: string, bikeId: string) => {
 
     return true;
   } catch (error) {
-    console.log(error);
     return null;
   }
 };
@@ -112,7 +109,6 @@ const getBikeReservations = async (bikeId: string) => {
 
     return { bike: bikeData, reservations: [] };
   } catch (error) {
-    console.log(error);
     return { bike: null, reservations: null };
   }
 };
@@ -158,7 +154,6 @@ const getUserReservations = async (userId: string) => {
 
     return { user: userData, reservations: [] };
   } catch (error) {
-    console.log(error);
     return { user: null, reservations: null };
   }
 };

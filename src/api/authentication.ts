@@ -1,9 +1,9 @@
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
-  signInWithEmailAndPassword,
   setPersistence,
-  browserLocalPersistence,
+  signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 import { addUser, getUser } from "src/api/users";
@@ -21,14 +21,11 @@ const login = async (email: string, password: string) => {
 
     if (response) {
       sessionStorage.setItem("Auth Token", response.user.refreshToken);
-      const user = await getUser(email);
-      console.log({ user });
-      return user;
+      return await getUser(email);
     }
 
     return null;
   } catch (error) {
-    console.log(error);
     return null;
   }
 };
@@ -53,7 +50,6 @@ const register = async (email: string, password: string, role: string) => {
 
     return null;
   } catch (error) {
-    console.log(error);
     return null;
   }
 };

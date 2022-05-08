@@ -17,7 +17,6 @@ const useIsLoggedIn = () => {
         const { email } = user;
 
         const userData = await getUser(email);
-        console.log(userData);
 
         setUser(userData);
 

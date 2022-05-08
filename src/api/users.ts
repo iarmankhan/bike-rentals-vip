@@ -35,7 +35,6 @@ const addUser = async (data: User) => {
       ...data,
     });
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -45,7 +44,6 @@ const editUser = async (userId: string, data: Partial<User>) => {
     const userRef = doc(db, "users", userId);
     return await updateDoc(userRef, data);
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -66,7 +64,6 @@ const deleteUser = async (userId: string) => {
 
     return await deleteDoc(userRef);
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -88,7 +85,6 @@ const getUsers = async () => {
 
     return [];
   } catch (e) {
-    console.log(e);
     return [];
   }
 };
@@ -107,7 +103,6 @@ const getUser = async (email: string) => {
     }
     return null;
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -124,7 +119,6 @@ const getUserByRef = async (userRef: DocumentReference) => {
     }
     return null;
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
