@@ -7,6 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { addUser, getUser } from "src/api/users";
+import { toast } from "react-toastify";
 
 export const authentication = getAuth();
 
@@ -25,7 +26,14 @@ const login = async (email: string, password: string) => {
     }
 
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === "auth/user-not-found") {
+      toast.error("User not found");
+    } else if (error.code === "auth/wrong-password") {
+      toast.error("Wrong password");
+    } else {
+      toast.error("Something went wrong");
+    }
     return null;
   }
 };
@@ -49,7 +57,12 @@ const register = async (email: string, password: string, role: string) => {
     }
 
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === "auth/email-already-in-use") {
+      toast.error("Email already in use");
+    } else {
+      toast.error("Something went wrong");
+    }
     return null;
   }
 };

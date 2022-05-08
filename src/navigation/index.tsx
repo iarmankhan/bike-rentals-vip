@@ -5,7 +5,6 @@ import Bikes from "src/pages/bikes/Bikes";
 import Users from "src/pages/users/Users";
 import UserReservations from "src/pages/users/UserReservations";
 import BikeReservations from "src/pages/bikes/BikeReservations";
-import Home from "../pages/Home";
 import Login from "../pages/authentication/Login";
 
 interface MainNavigationProps {}
@@ -13,7 +12,6 @@ interface MainNavigationProps {}
 const MainNavigation: FC<MainNavigationProps> = () => (
   <BrowserRouter>
     <Routes>
-      <Route index element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Signup />} />
       <Route path="bikes">

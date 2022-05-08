@@ -30,7 +30,7 @@ const Users: FC<UsersProps> = () => {
 
   useEffect(() => {
     if (user?.role === "user") {
-      navigate("/");
+      navigate("/bikes");
     }
   }, [user]);
 

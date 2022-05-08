@@ -21,7 +21,7 @@ const useIsLoggedIn = () => {
         setUser(userData);
 
         if (pathname === "/login" || pathname === "/register") {
-          navigate("/");
+          navigate("/bikes");
         }
       } else if (pathname !== "/login" && pathname !== "/register") {
         navigate("/login");

@@ -50,7 +50,7 @@ const AuthForm: FC<AuthFormProps> = ({ type }) => {
           toast.success(
             type === "login" ? "Login Successful" : "Signup Successful"
           );
-          navigate("/");
+          navigate("/bikes");
         }
 
         setLoading(false);

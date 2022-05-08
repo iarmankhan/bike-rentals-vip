@@ -17,10 +17,6 @@ import useStore from "src/store";
 
 const pages = [
   {
-    title: "Home",
-    path: "/",
-  },
-  {
     title: "Bikes",
     path: "/bikes",
   },
@@ -175,7 +171,7 @@ const NavBar = () => {
               <MenuItem
                 onClick={async () => {
                   const resp = await logout();
-                  if (resp) navigate("/");
+                  if (resp) navigate("/login");
 
                   handleCloseUserMenu();
                 }}
