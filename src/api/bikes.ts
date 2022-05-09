@@ -15,6 +15,7 @@ import {
 import { Bike, Reservation } from "src/types/bikes.types";
 import { User } from "src/types/users.types";
 import { getUserReservations } from "src/api/bike-user";
+import { toast } from "react-toastify";
 
 const addBike = async (data: Bike) => {
   try {
@@ -49,8 +50,10 @@ const deleteBike = async (bikeId: string) => {
       // eslint-disable-next-line no-await-in-loop
       await deleteDoc(reservationDoc.ref);
     }
-    return await deleteDoc(bikeRef);
-  } catch (e) {
+    await deleteDoc(bikeRef);
+    return true;
+  } catch (e: any) {
+    toast.error(e?.message || "Something went wrong");
     return null;
   }
 };

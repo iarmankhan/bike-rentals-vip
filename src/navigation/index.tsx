@@ -12,7 +12,7 @@ interface MainNavigationProps {}
 const MainNavigation: FC<MainNavigationProps> = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route index element={<Login />} />
       <Route path="/register" element={<Signup />} />
       <Route path="bikes">
         <Route index element={<Bikes />} />

@@ -11,6 +11,7 @@ import { Bike } from "src/types/bikes.types";
 import { User } from "src/types/users.types";
 import { deleteUser } from "src/api/users";
 import { deleteBike } from "src/api/bikes";
+import { toast } from "react-toastify";
 
 interface DeleteModalProps {
   open: boolean;
@@ -36,13 +37,18 @@ const DeleteModal: FC<DeleteModalProps> = ({
 
   const handleDelete = async () => {
     setLoading(true);
+    let res;
     if (user && user.id) {
-      await deleteUser(user.id);
+      res = await deleteUser(user.id);
     } else if (bike && bike.id) {
-      await deleteBike(bike.id);
+      res = await deleteBike(bike.id);
     }
     setLoading(false);
-    onItemDeleted();
+
+    if (res) {
+      toast.success("Item deleted successfully");
+      onItemDeleted();
+    }
   };
 
   return (

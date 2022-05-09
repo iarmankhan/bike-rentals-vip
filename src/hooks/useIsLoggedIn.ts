@@ -20,11 +20,11 @@ const useIsLoggedIn = () => {
 
         setUser(userData);
 
-        if (pathname === "/login" || pathname === "/register") {
+        if (pathname === "/" || pathname === "/register") {
           navigate("/bikes");
         }
-      } else if (pathname !== "/login" && pathname !== "/register") {
-        navigate("/login");
+      } else if (pathname !== "/" && pathname !== "/register") {
+        navigate("/");
       }
     });
   }, []);

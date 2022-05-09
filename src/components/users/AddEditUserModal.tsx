@@ -63,14 +63,21 @@ const AddEditUserModal: FC<AddEditUserModalProps> = ({
       setLoading(true);
 
       if (user && user.id) {
-        await editUser(user.id, omit(data, ["password"]));
-        toast.success("User updated successfully");
+        const res = await editUser(user.id, omit(data, ["password"]));
+        if (res) {
+          toast.success("User updated successfully");
+          resetForm();
+          onUserAdded();
+        }
       } else {
-        await addUser(data);
-        toast.success("User added successfully");
+        const res = await addUser(data);
+        if (res) {
+          toast.success("User added successfully");
+          resetForm();
+          onUserAdded();
+        }
       }
       setLoading(false);
-      onUserAdded();
     },
   });
 

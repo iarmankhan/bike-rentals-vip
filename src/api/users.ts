@@ -14,27 +14,45 @@ import {
   where,
 } from "firebase/firestore";
 import { User } from "src/types/users.types";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { authentication } from "src/api/authentication";
+import { getAuth } from "firebase/auth";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { apiEndpoints } from "src/constants/apiEndpoints";
 
 const addUser = async (data: User) => {
   try {
-    const response = await createUserWithEmailAndPassword(
-      authentication,
-      data.email,
-      data.password || ""
+    const token = await getAuth()?.currentUser?.getIdToken();
+
+    const response = await axios.post(
+      apiEndpoints.createUser,
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    if (!response) {
+    if (!response || !response.data) {
       throw new Error("User creation failed");
     }
+
+    console.log(response.data);
 
     const usersRef = collection(db, "users");
     return await addDoc(usersRef, {
       created: serverTimestamp(),
       ...data,
+      uid: response.data.user.uid,
     });
-  } catch (e) {
+  } catch (error: any) {
+    console.log(error);
+    toast.error(
+      error?.response?.data?.message || error?.message || "Something went wrong"
+    );
     return null;
   }
 };
@@ -62,8 +80,29 @@ const deleteUser = async (userId: string) => {
       await deleteDoc(reservationDoc.ref);
     }
 
-    return await deleteDoc(userRef);
-  } catch (e) {
+    const user = await getDoc(userRef);
+
+    const token = await getAuth()?.currentUser?.getIdToken();
+
+    const response = await axios.delete(apiEndpoints.deleteUser, {
+      data: {
+        uid: user?.data()?.uid,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response || !response.data) {
+      throw new Error("User deletion failed");
+    }
+
+    await deleteDoc(userRef);
+    return true;
+  } catch (e: any) {
+    toast.error(
+      e?.response?.data?.message || e?.message || "Something went wrong"
+    );
     return null;
   }
 };

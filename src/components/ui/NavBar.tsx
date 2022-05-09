@@ -166,7 +166,7 @@ const NavBar = () => {
               <MenuItem
                 onClick={async () => {
                   const resp = await logout();
-                  if (resp) navigate("/login");
+                  if (resp) navigate("/");
 
                   handleCloseUserMenu();
                 }}
