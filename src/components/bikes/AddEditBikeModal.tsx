@@ -25,7 +25,9 @@ interface AddEditBikeModalProps {
 }
 
 const AddEditBikeSchema = Yup.object().shape({
-  color: Yup.string().required("Color is required"),
+  color: Yup.string()
+    .required("Color is required")
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
   model: Yup.string().required("Model is required"),
   location: Yup.string().required("Location is required"),
   isAvailable: Yup.boolean().required("Availability is required"),

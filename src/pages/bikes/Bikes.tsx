@@ -129,16 +129,18 @@ const Bikes: FC<BikesProps> = () => {
         <Box width="100%" display="flex" alignItems="center">
           {user?.role !== "manager" ? (
             <>
-              <Button
-                variant="outlined"
-                sx={{ marginRight: "5px", padding: "3px " }}
-                onClick={() => {
-                  setSelectedBike(params.row);
-                  setOpenRatingModal(true);
-                }}
-              >
-                Rate
-              </Button>
+              {params.row?.isReservedByUser && (
+                <Button
+                  variant="outlined"
+                  sx={{ marginRight: "5px", padding: "3px " }}
+                  onClick={() => {
+                    setSelectedBike(params.row);
+                    setOpenRatingModal(true);
+                  }}
+                >
+                  Rate
+                </Button>
+              )}
 
               {params.row?.isReservedByUser ? (
                 <Button

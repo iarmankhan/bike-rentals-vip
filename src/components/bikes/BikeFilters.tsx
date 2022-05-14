@@ -11,6 +11,7 @@ import {
 import { Bike, BikeFiltersType } from "src/types/bikes.types";
 import { getAverageRating } from "src/utils/getAverageRating";
 import moment from "moment";
+import eachDayOfInterval from "date-fns/eachDayOfInterval";
 
 interface BikeFiltersProps {
   bikes: Bike[];
@@ -22,7 +23,8 @@ const FILTER_INITIAL_STATE: BikeFiltersType = {
   model: "",
   color: "",
   rating: "",
-  date: "",
+  startDate: "",
+  endDate: "",
 };
 
 const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
@@ -30,14 +32,15 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
 
   useEffect(() => {
     const newFilteredBikes = bikes.filter((bike) => {
-      const { location, model, color, rating, date } = filters;
+      const { location, model, color, rating, startDate, endDate } = filters;
 
       if (
         location === "" &&
         model === "" &&
         color === "" &&
         rating === "" &&
-        date === ""
+        startDate === "" &&
+        endDate === ""
       )
         return true;
 
@@ -51,16 +54,24 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
         (rating === "" ||
           Math.floor(getAverageRating(bike?.rating || {})) ===
             Number(rating)) &&
-        (date === "" ||
-          bike?.reservations?.every(
-            (reservation) =>
-              !moment(date).isBetween(
-                moment.unix(reservation.startDate.seconds),
-                moment.unix(reservation.endDate.seconds),
-                "days",
-                "[]"
-              )
-          ))
+        (startDate === "" ||
+          endDate === "" ||
+          bike?.reservations?.every((reservation) => {
+            const allDates = eachDayOfInterval({
+              start: moment(startDate).toDate(),
+              end: moment(endDate).toDate(),
+            }).flat();
+
+            return allDates.every(
+              (date) =>
+                !moment(date).isBetween(
+                  moment.unix(reservation.startDate.seconds),
+                  moment.unix(reservation.endDate.seconds),
+                  "days",
+                  "[]"
+                )
+            );
+          }))
       );
     });
     onBikeFilter(newFilteredBikes);
@@ -83,9 +94,9 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
       justifyContent="space-between"
     >
       <TextField
-        id="date"
-        label="Date"
-        name="date"
+        id="startDate"
+        label="Start Date"
+        name="startDate"
         type="date"
         size="small"
         InputLabelProps={{
@@ -94,7 +105,24 @@ const BikeFilters: FC<BikeFiltersProps> = ({ bikes, onBikeFilter }) => {
         inputProps={{
           min: moment().format("YYYY-MM-DD"),
         }}
-        value={filters.date}
+        value={filters.startDate}
+        onChange={handleFilterChange}
+      />
+      <TextField
+        id="endDate"
+        label="End Date"
+        name="endDate"
+        type="date"
+        size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        inputProps={{
+          min: filters?.startDate
+            ? moment(filters?.startDate).format("YYYY-MM-DD")
+            : moment().format("YYYY-MM-DD"),
+        }}
+        value={filters.endDate}
         onChange={handleFilterChange}
       />
       <TextField

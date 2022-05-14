@@ -12,7 +12,8 @@ export interface Bike {
 }
 
 export interface BikeFiltersType {
-  date: string;
+  startDate: string;
+  endDate: string;
   location: string;
   model: string;
   color: string;

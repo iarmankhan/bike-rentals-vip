@@ -95,7 +95,7 @@ const Users: FC<UsersProps> = () => {
             }}
             hideDelete={user?.id === params.row.id}
             moreActions={[
-              ...(user?.role !== "manager"
+              ...(params.row.role !== "manager"
                 ? [
                     {
                       label: "View Reservations",
